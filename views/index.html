@@ -31,15 +31,22 @@
         </p>
       </div>
       <script>
-        document.querySelector('form').addEventListener('submit', async (e) => {
+        document.querySelector('form').addEventListener('submit', function(e) {
           e.preventDefault();
-          const formData = new FormData(document.querySelector('form'));
-          const response = await fetch('/api/fileanalyse', {
+          var formData = new FormData(this);
+          fetch('/api/fileanalyse', {
             method: 'POST',
             body: formData
+          })
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(data) {
+            document.querySelector('#output').innerHTML = JSON.stringify(data);
+          })
+          .catch(function(error) {
+            document.querySelector('#output').innerHTML = JSON.stringify({error: error.message});
           });
-          const data = await response.json();
-          document.querySelector('#output').textContent = JSON.stringify(data);
         });
       </script>
    </body>
