@@ -1,26 +1,19 @@
 const express = require("express");
 const multer = require("multer");
+const cors = require("cors");
 
 const app = express();
 const upload = multer();
 
-// Allow freeCodeCamp to test the project from another website
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send(`
     <!DOCTYPE html>
-    <html lang="en">
+    <html>
       <head>
-        <meta charset="UTF-8">
         <title>File Metadata Microservice</title>
       </head>
-
       <body>
         <h1>File Metadata Microservice</h1>
 
@@ -37,26 +30,18 @@ app.get("/", (req, res) => {
   `);
 });
 
-app.post(
-  "/api/fileanalyse",
-  upload.single("upfile"),
-  (req, res) => {
-    if (!req.file) {
-      return res.status(400).json({
-        error: "No file uploaded"
-      });
-    }
-
-    return res.json({
-      name: req.file.originalname,
-      type: req.file.mimetype,
-      size: req.file.size
+app.post("/api/fileanalyse", upload.single("upfile"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({
+      error: "No file uploaded"
     });
   }
-);
+
+  return res.json({
+    name: req.file.originalname,
+    type: req.file.mimetype,
+    size: req.file.size
+  });
+});
 
 module.exports = app;
-
-if (require.main === module) {
-  app.listen(process.env.PORT || 3000);
-}
