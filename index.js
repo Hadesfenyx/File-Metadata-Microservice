@@ -19,11 +19,13 @@ app.post('/api/fileanalyse', upload.single('upfile'), function (req, res) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
 
-  res.json({
+  var fileInfo = {
     name: req.file.originalname,
     size: req.file.size,
     type: req.file.mimetype
-  });
+  };
+
+  res.json(fileInfo);
 });
 
 
