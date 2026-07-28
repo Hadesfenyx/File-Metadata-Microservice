@@ -34,19 +34,19 @@
         document.querySelector('form').addEventListener('submit', function(e) {
           e.preventDefault();
           var formData = new FormData(this);
-          fetch('/api/fileanalyse', {
-            method: 'POST',
-            body: formData
-          })
-          .then(function(response) {
-            return response.json();
-          })
-          .then(function(data) {
-            document.querySelector('#output').innerHTML = JSON.stringify(data);
-          })
-          .catch(function(error) {
-            document.querySelector('#output').innerHTML = JSON.stringify({error: error.message});
-          });
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', '/api/fileanalyse', true);
+          xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              document.querySelector('#output').innerHTML = xhr.responseText;
+            } else {
+              document.querySelector('#output').innerHTML = JSON.stringify({error: 'Upload failed'});
+            }
+          };
+          xhr.onerror = function() {
+            document.querySelector('#output').innerHTML = JSON.stringify({error: 'Request error'});
+          };
+          xhr.send(formData);
         });
       </script>
    </body>
